@@ -1,11 +1,15 @@
 package persanal.dorn;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageInputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 public class Panel extends JPanel implements ActionListener {
@@ -25,6 +29,7 @@ public class Panel extends JPanel implements ActionListener {
     Timer timer;
     Random random;
 
+
     Image head;
     Image bodyG;
     Image bodyV;
@@ -33,10 +38,10 @@ public class Panel extends JPanel implements ActionListener {
     Image turn2;
     Image turn3;
     Image apple;
-    Image backGroung;
+    Image backGround;
 
 
-    Panel() {
+    Panel() throws IOException {
         random = new Random();
         this.setPreferredSize(new Dimension(Width, Height));
         this.setBackground(Color.black);
@@ -45,19 +50,19 @@ public class Panel extends JPanel implements ActionListener {
         start();
     }
 
-    public void start() {
+    public void start() throws IOException {
         newFood();
         game = true;
         timer = new Timer(Delay, this);
         timer.start();
-        apple = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/apple.png").getImage();
-        bodyG = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/bodyRight.png").getImage();
-        bodyV = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/bodyUp.png").getImage();
-        turn0 = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/turn0.gif").getImage();
-        turn1 = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/turn1.gif").getImage();
-        turn2 = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/turn2.gif").getImage();
-        turn3 = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/turn3.gif").getImage();
-        backGroung = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/BackGround.png").getImage();
+        apple = ImageIO.read(new FileImageInputStream(new File("Resources/apple.png")));
+        bodyG = ImageIO.read(new FileImageInputStream(new File("Resources/bodyRight.png")));
+        bodyV = ImageIO.read(new FileImageInputStream(new File("Resources/bodyUp.png")));
+        turn0 = ImageIO.read(new FileImageInputStream(new File("Resources/turn0.gif")));
+        turn1 = ImageIO.read(new FileImageInputStream(new File("Resources/turn1.gif")));
+        turn2 = ImageIO.read(new FileImageInputStream(new File("Resources/turn2.gif")));
+        turn3 = ImageIO.read(new FileImageInputStream(new File("Resources/turn3.gif")));
+        backGround = ImageIO.read(new FileImageInputStream(new File("Resources/BackGround.png")));
 
     }
 
@@ -69,7 +74,7 @@ public class Panel extends JPanel implements ActionListener {
     public void draw(Graphics graphics) {
         if (game) {
             //background image
-            graphics.drawImage(backGroung, 0, 0, null);
+            graphics.drawImage(backGround, 0, 0, null);
 
             //food
             graphics.drawImage(apple, foodX, foodY, null);
@@ -108,12 +113,11 @@ public class Panel extends JPanel implements ActionListener {
             graphics.setFont(new Font("Ink Free", Font.BOLD, 50));
             FontMetrics metrics = getFontMetrics(graphics.getFont());
             graphics.drawString("Score: " + foodCount, (Width - metrics.stringWidth("Score" + foodCount)) / 2,  60);
-            System.out.println(snake.getCoordsX(0) + " " + snake.getCoordsY(0));
         }else
             gameOver(graphics);
     }
 
-    public void move() {
+    public void move() throws IOException {
         for (int i = snake.getLength(); i > 0; --i) {
             snake.setCoordsX(i, snake.getCoordsX(i - 1));
             snake.setCoordsY(i, snake.getCoordsY(i - 1));
@@ -127,22 +131,22 @@ public class Panel extends JPanel implements ActionListener {
             case 'R' -> {
                 snake.setCoordsX(0, snake.getCoordsX(0) + Size);
                 snake.setDirection(0, 'R');
-                head = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/snakeRight.png").getImage();
+                head = ImageIO.read(new FileImageInputStream(new File("Resources/snakeRight.png")));
             }
             case 'L' -> {
                 snake.setCoordsX(0, snake.getCoordsX(0) - Size);
                 snake.setDirection(0, 'L');
-                head = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/snakeLeft.png").getImage();
+                head = ImageIO.read(new FileImageInputStream(new File("Resources/snakeLeft.png")));
             }
             case 'U' -> {
                 snake.setCoordsY(0, snake.getCoordsY(0) - Size);
                 snake.setDirection(0, 'U');
-                head = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/snakeUp.png").getImage();
+                head = ImageIO.read(new FileImageInputStream(new File("Resources/snakeUp.png")));
             }
             case 'D' -> {
                 snake.setCoordsY(0, snake.getCoordsY(0) + Size);
                 snake.setDirection(0, 'D');
-                head = new ImageIcon("C:/Users/Sasha/IdeaProjects/Snake/src/persanal/dorn/data/snakeDown.png").getImage();
+                head = ImageIO.read(new FileImageInputStream(new File("Resources/snakeDown.png")));
             }
         }
         TrueRoute = Route;
@@ -229,7 +233,11 @@ public class Panel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent event){
         if (game) {
             //checkCollisions();
-            move();
+            try {
+                move();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             checkCollisions();
             checkFood();
         }

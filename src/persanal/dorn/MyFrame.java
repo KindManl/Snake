@@ -1,11 +1,12 @@
 package persanal.dorn;
 
 import javax.swing.*;
+import java.io.IOException;
 
 
 public class MyFrame extends JFrame {
 
-    MyFrame(){
+    MyFrame() throws IOException {
         Panel panel = new Panel();
         this.add(panel);
         this.setTitle("Snake Game");
